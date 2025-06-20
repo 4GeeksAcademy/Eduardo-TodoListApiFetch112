@@ -1,8 +1,24 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
 
 function TodoList() {
   const [tareas, setTareas] = useState([]);
   const [nuevaTarea, setNuevaTarea] = useState("");
+
+function getCharacters() {
+		fetch('https://playground.4geeks.com/todo/users/Eduardo',{method:"GET"})// buscar informacion en la url
+		.then((response)=>{
+			return response.json()}) // si llega una respuesta prometo que la convierto en un formato utilizable JSON
+		
+		.then((data)=>setTareas(data.todos)) // Prometo que si el formato a json sale bien lo guardo en un espacio
+		.catch((error)=>console.log(error)) // si algo sale, lo aviso
+	}
+  console.log(tareas)
+
+	useEffect(()=>{
+		//codigo que queremos que se ejecute cuando se cargue el componente
+		getCharacters()
+	},[])
 
   const input = (e) => setNuevaTarea(e.target.value);
 
@@ -36,7 +52,7 @@ function TodoList() {
             return (
               <div key={index}>
                 <li className="list-group-item d-flex justify-content-between">
-                  {tarea.texto}
+                  {tarea.label}
                   {!tarea.completado && <button className="btn btn-danger" onClick={() => click(index)}>Borrar</button>}
 
                   <button className="btn btn-success" onClick={() => finalizarClick(index)}>Finalizar</button>
