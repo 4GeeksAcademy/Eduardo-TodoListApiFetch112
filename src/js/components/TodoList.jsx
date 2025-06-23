@@ -1,64 +1,67 @@
 import { useState, useEffect } from "react";
+import { deleteTask } from "./api/todo.js"
 
 
 function TodoList() {
   const [tareas, setTareas] = useState([]);
   const [nuevaTarea, setNuevaTarea] = useState("");
 
-function obtenerListaTareas() {
-		fetch('https://playground.4geeks.com/todo/users/eduardo',{method:"GET"})// buscar informacion en la url
-		.then((response)=>{
-			return response.json()}) // si llega una respuesta prometo que la convierto en un formato utilizable JSON
-		
-		.then((data)=>setTareas(data.todos)) // Prometo que si el formato a json sale bien lo guardo en un espacio
-		.catch((error)=>console.log(error)) // si algo sale, lo aviso
-	}
+  function obtenerListaTareas() {
+    fetch('https://playground.4geeks.com/todo/users/eduardo', { method: "GET" })// buscar informacion en la url
+      .then((response) => {
+        return response.json()
+      }) // si llega una respuesta prometo que la convierto en un formato utilizable JSON
+
+      .then((data) => setTareas(data.todos)) // Prometo que si el formato a json sale bien lo guardo en un espacio
+      .catch((error) => console.log(error)) // si algo sale, lo aviso
+  }
   console.log(tareas)
 
-function createTask() {
+  function createTask() {
 
-		fetch('https://playground.4geeks.com/todo/todos/eduardo',{
-			method: "POST",
-			body: JSON.stringify({
-				"label": nuevaTarea,
-				"is_done": false
-			}),
-			headers:{
-				"Content-Type": "application/json"
-			}
-		})
-		.then((response)=>{
-			console.log(response);
-			if (response.status === 201) {
-				obtenerListaTareas();
-        setNuevaTarea("");  //PARA LIMPIAR EL INPUT
-			}
-			
-			return response.json()})
-		.then((data)=>console.log(data))
-		.catch((error)=>console.log(error))
+    fetch('https://playground.4geeks.com/todo/todos/eduardo', {
+      method: "POST",
+      body: JSON.stringify({
+        "label": nuevaTarea,
+        "is_done": false
+      }),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
+      .then((response) => {
+        console.log(response);
+        if (response.status === 201) {
+          obtenerListaTareas();
+          setNuevaTarea("");  //PARA LIMPIAR EL INPUT
+        }
 
-	}
+        return response.json()
+      })
+      .then((data) => console.log(data))
+      .catch((error) => console.log(error))
+
+  }
 
 
-	useEffect(()=>{
-		//codigo que queremos que se ejecute cuando se cargue el componente
-		obtenerListaTareas()
-	},[])
+  useEffect(() => {
+    //codigo que queremos que se ejecute cuando se cargue el componente
+    obtenerListaTareas()
+  }, [])
 
 
   const input = (e) => setNuevaTarea(e.target.value);
 
   const keyDown = (e) => {
     if (e.key === "Enter" && nuevaTarea.trim() !== "") {
-      
+
       createTask(); // funcion que envía la tarea
     }
   }
-            // en vez de pasar el index tengo pasar el ID 
+  // en vez de pasar el index tengo pasar el ID 
   const borrarTareas = (index) => {
     // const newTareas = tareas.filter((tarea, i) => index != i)
-    
+
   }
 
   const finalizarClick = (index) => {
@@ -79,11 +82,13 @@ function createTask() {
             return (
               <div key={index}>
                 <li className="list-group-item d-flex justify-content-between">
-                  {tarea.label}
-                  {!tarea.completado && <button className="btn btn-danger" onClick={() => borrarTareas(index)}>Borrar</button>}
-
-                  <button className="btn btn-success" onClick={() => finalizarClick(index)}>Finalizar</button>
-
+                  <p>
+                    {tarea.label}
+                  </p>
+                  <div>
+                    {!tarea.completado && <button className="btn btn-danger me-2" onClick={() => { deleteTask(tarea.id), obtenerListaTareas() }}>Borrar</button>}
+                    <button className="btn btn-success" onClick={() => finalizarClick(index)}>Finalizar</button>
+                  </div>
                 </li>
               </div>
             )
