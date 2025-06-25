@@ -43,12 +43,10 @@ function TodoList() {
 
   }
 
-
   useEffect(() => {
     //codigo que queremos que se ejecute cuando se cargue el componente
     obtenerListaTareas()
   }, [])
-
 
   const input = (e) => setNuevaTarea(e.target.value);
 
@@ -86,7 +84,18 @@ function TodoList() {
                     {tarea.label}
                   </p>
                   <div>
-                    {!tarea.completado && <button className="btn btn-danger me-2" onClick={() => { deleteTask(tarea.id), obtenerListaTareas() }}>Borrar</button>}
+                    {!tarea.completado && <button className="btn btn-danger me-2"
+
+                      onClick={() => {
+                        deleteTask(tarea.id).then(() => {
+                          obtenerListaTareas();
+                        });
+                      }}
+
+                    //onClick={() => { deleteTask(tarea.id), obtenerListaTareas() }}  CODIGO ANTIGUO
+                    //he esperado que termine la eliminación antes de recargar la lista y añadÍ un return en el delete
+
+                    >Borrar</button>}
                     <button className="btn btn-success" onClick={() => finalizarClick(index)}>Finalizar</button>
                   </div>
                 </li>
